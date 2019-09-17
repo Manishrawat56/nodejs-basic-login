@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/login.css')
+  body
+    
+
+  .login-page
+    form.login-form
+        input(type='text', placeholder='username')
+        input(type='password', placeholder='password')
+        button login
+        p.message
+            | Not registered? 
+            a(href='register') Create an account

@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/register.css')
+  body
+    .register-page
+    form.register-form
+        input(type='text', placeholder='name')
+        input(type='password', placeholder='password')
+        input(type='text', placeholder='email address')
+        input(type='text', placeholder='mobile no')
+        button create
+        p.message
+            | Already registered? 
+            a(href='login') Sign In
