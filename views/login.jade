@@ -1,16 +1,12 @@
-doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/login.css')
-  body
-    
+extends layout
 
-  .login-page
-    form.login-form
-        input(type='text', placeholder='username')
-        input(type='password', placeholder='password')
-        button login
-        p.message
-            | Not registered? 
-            a(href='register') Create an account
+block content
+ h2.page-header Login
+ p Please login below
+ form(method='post', action='/users/login')
+   label Username
+   input.form-control(name='username', type='text', placeholder='Enter Username')
+  .form-group
+   label Password
+   input.form-control(name='password', type='password', placeholder='Enter Password')
+  input.btn.btn-primary(type='submit', name='submit',value='Login')

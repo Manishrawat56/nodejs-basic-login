@@ -1,11 +1,11 @@
-body {
+/* body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
-}
+} */
 
 /* @import url(https://fonts.googleapis.com/css?family=Roboto:300); */
 
@@ -66,8 +66,8 @@ a {
 }
 
 
-body {
-  background: #4c76c4; /* fallback for old browsers */
+/* body {
+  background: #4c76c4; 
   background: -webkit-linear-gradient(right, #4c76c4, #1d4185);
   background: -moz-linear-gradient(right, #4c76c4, #2d4f8f);
   background: -o-linear-gradient(right, #4c76c4, #284883);
@@ -75,4 +75,4 @@ body {
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
-}
+} */
