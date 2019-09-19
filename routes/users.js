@@ -17,12 +17,12 @@ router.get('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login',{title:"Login"});
 });
-router.post('/register',[check('name','Name field is required').exists(),
-check('name','Name field is required').exists(),
-check('email','Email field is required').exists(),
+router.post('/register',[check('name','Name field is required').isEmpty(),
+
+check('email','Email field is required').isEmpty(),
 check('email','Email is not valid').isEmail(),
-check('username','Username field is required').exists(),
-check('password','Password field is required').exists(),
+check('username','Username field is required').isEmpty(),
+check('password','Password field is required').isEmpty(),
 check('password2','Passwords do not match').custom((value, { req }) => value === req.body.password)
 ],upload.single('profileimage'), function(req, res, next) {
   let name=req.body.name;
@@ -42,36 +42,43 @@ check('password2','Passwords do not match').custom((value, { req }) => value ===
    
   
     // Check Errors
-    var errors = req.validationErrors();
+    //var errors = req.validationErrors();
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.render('register', {
+        errors: errors.array()
+      });
+      //return res.status(422).json({ errors: errors.array() });
+    }
   
-    if(errors){
+    /* if(errors){
       res.render('register', {
         errors: errors
       });
-    } else{
+    }  */else{
       console.log('No Errors');
 
-      var today = new Date();
-               var newUser={
-                 id:0,
-                 name: name,
-                 email: email,
-                 username: username,
-                 password: password,
-                 profileimage: profileimage,
-                 "created":today,
-                 "modified":today
-               }
-
-               User.createUser(newUser, function(err, user){
-                if(err) throw err;
-                console.log(user);
-              });
+      // var today = new Date();
+      //          var newUser={
+      //            id:0,
+      //            name: name,
+      //            email: email,
+      //            username: username,
+      //            password: password,
+      //            profileimage: profileimage,
+      //            "created":today,
+      //            "modified":today
+      //          }
+      //          console.log("newUser"+JSON.stringify(newUser));
+      //         User.createUser(newUser, function(err, user){
+      //           if(err) throw err;
+      //           console.log(user);
+      //         });
           
-              req.flash('success', 'You are now registered and can login');
+      //         req.flash('success', 'You are now registered and can login');
           
-              res.location('/');
-              res.redirect('/');
+      //         res.location('/');
+      //         res.redirect('/');
     }
 });
 module.exports = router;
