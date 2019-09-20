@@ -3,6 +3,9 @@ var router = express.Router();
 var multer = require('multer');
 var upload = multer({dest: './uploads'});
 var User = require('../models/users');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 const {check, validationResult} = require('express-validator');
 
 /* GET users listing. */
@@ -17,6 +20,48 @@ router.get('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login',{title:"Login"});
 });
+
+router.post('/login',
+  passport.authenticate('local',{failureRedirect:'/users/login', failureFlash: 'Invalid username or password'}),
+  function(req, res) {
+   req.flash('success', 'You are now logged in');
+   res.redirect('/');
+});
+
+passport.serializeUser(function(user, done) {
+  console.log("done "+done+"\nuser "+JSON.stringify(user));
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  console.log("done "+done+"n\id "+id);
+  User.getUserById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+passport.use(new LocalStrategy(function(username, password, done){
+  //console.log("username "+username+"\npassword "+password);
+  User.getUserByUsername(username, function(err, result){
+    let user=result[0];
+    //console.log("err "+err+"\nuser "+JSON.stringify(user));
+    if(err) throw err;
+    if(!user){
+      return done(null, false, {message: 'Unknown User'});
+    }
+    //console.log("password "+password+"\nuser.password "+user.password);
+    User.comparePassword(password, user.password, function(err, isMatch){
+      //console.log("err "+err+"\nisMatch "+isMatch);
+      if(err) return done(err);
+      if(isMatch){
+        return done(null, user);
+      } else {
+        return done(null, false, {message:'Invalid Password'});
+      }
+    });
+  });
+}));
+
 router.post('/register',[check('name','Name field is required').isEmpty(),
 
 check('email','Email field is required').isEmpty(),
@@ -58,27 +103,33 @@ check('password2','Passwords do not match').custom((value, { req }) => value ===
     }  */else{
       console.log('No Errors');
 
-      // var today = new Date();
-      //          var newUser={
-      //            id:0,
-      //            name: name,
-      //            email: email,
-      //            username: username,
-      //            password: password,
-      //            profileimage: profileimage,
-      //            "created":today,
-      //            "modified":today
-      //          }
-      //          console.log("newUser"+JSON.stringify(newUser));
-      //         User.createUser(newUser, function(err, user){
-      //           if(err) throw err;
-      //           console.log(user);
-      //         });
+      var today = new Date();
+               var newUser={
+                 id:0,
+                 name: name,
+                 email: email,
+                 username: username,
+                 password: password,
+                 profileimage: profileimage,
+                 "created":today,
+                 "modified":today
+               }  
+               console.log("newUser"+JSON.stringify(newUser));
+              User.createUser(newUser, function(err, user){
+                if(err) throw err;
+                console.log(user);
+              });
           
-      //         req.flash('success', 'You are now registered and can login');
+              req.flash('success', 'You are now registered and can login');
           
-      //         res.location('/');
-      //         res.redirect('/');
+              res.location('/');
+              res.redirect('/');
     }
+});
+
+router.get('/logout', function(req, res){
+  req.logout();
+  req.flash('info', 'You are now logged out');
+  res.redirect('/users/login');
 });
 module.exports = router;
